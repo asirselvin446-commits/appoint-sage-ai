@@ -1,6 +1,6 @@
 import { 
   LayoutDashboard, Users, Calendar, Bell, Mic, 
-  Activity, ChevronRight, Stethoscope
+  Activity, ChevronRight, Stethoscope, LogOut
 } from "lucide-react";
 import { ActiveView } from "@/pages/Index";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,10 @@ interface SidebarProps {
   activeView: ActiveView;
   onNavigate: (view: ActiveView) => void;
   onVoiceOpen: () => void;
+  doctorName: string;
+  doctorInitials: string;
+  specialty: string;
+  onSignOut: () => void;
 }
 
 const navItems = [
@@ -18,7 +22,7 @@ const navItems = [
   { id: 'reminders' as ActiveView, label: 'Reminders', icon: Bell },
 ];
 
-const Sidebar = ({ activeView, onNavigate, onVoiceOpen }: SidebarProps) => {
+const Sidebar = ({ activeView, onNavigate, onVoiceOpen, doctorName, doctorInitials, specialty, onSignOut }: SidebarProps) => {
   return (
     <aside className="w-64 h-full flex flex-col" style={{ background: 'hsl(var(--sidebar-background))' }}>
       {/* Logo */}
@@ -37,10 +41,12 @@ const Sidebar = ({ activeView, onNavigate, onVoiceOpen }: SidebarProps) => {
       {/* Doctor Info */}
       <div className="px-4 py-4 border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3 px-2">
-          <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold">MC</div>
+          <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            {doctorInitials}
+          </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">Dr. Michael Chen</p>
-            <p className="text-xs truncate" style={{ color: 'hsl(var(--sidebar-foreground) / 0.5)' }}>General Medicine</p>
+            <p className="text-sm font-medium text-white truncate">{doctorName || 'Doctor'}</p>
+            <p className="text-xs truncate" style={{ color: 'hsl(var(--sidebar-foreground) / 0.5)' }}>{specialty}</p>
           </div>
           <div className="w-2 h-2 rounded-full bg-success flex-shrink-0 animate-pulse-glow" />
         </div>
@@ -57,9 +63,7 @@ const Sidebar = ({ activeView, onNavigate, onVoiceOpen }: SidebarProps) => {
             onClick={() => onNavigate(id)}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
-              activeView === id
-                ? "text-white shadow-soft-sm"
-                : "hover:bg-sidebar-accent"
+              activeView === id ? "text-white shadow-soft-sm" : "hover:bg-sidebar-accent"
             )}
             style={activeView === id ? { background: 'hsl(var(--sidebar-primary))' } : { color: 'hsl(var(--sidebar-foreground) / 0.7)' }}
           >
@@ -71,10 +75,10 @@ const Sidebar = ({ activeView, onNavigate, onVoiceOpen }: SidebarProps) => {
       </nav>
 
       {/* Voice Assistant Button */}
-      <div className="p-4 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
+      <div className="p-4 space-y-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <button
           onClick={onVoiceOpen}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] animate-pulse-glow"
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{ background: 'hsl(var(--sidebar-primary))' }}
         >
           <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.2)' }}>
@@ -85,6 +89,14 @@ const Sidebar = ({ activeView, onNavigate, onVoiceOpen }: SidebarProps) => {
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>Say a command</p>
           </div>
           <Stethoscope className="w-4 h-4 text-white opacity-60" />
+        </button>
+        <button
+          onClick={onSignOut}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-sidebar-accent"
+          style={{ color: 'hsl(var(--sidebar-foreground) / 0.5)' }}
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          Sign out
         </button>
       </div>
     </aside>
